@@ -56,4 +56,21 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    // Jetpack Compose
+    implementation(libs.ui)
+    implementation(libs.androidx.activity.compose.v180)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+
+    // Retrofit para HTTP request
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+
+    // Coroutines
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutines.android)
+
+    //Coil
+    implementation(libs.coil.compose)
+
 }

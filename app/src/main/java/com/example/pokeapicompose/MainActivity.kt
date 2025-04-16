@@ -4,44 +4,27 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.ViewModelProvider
 import com.example.pokeapicompose.ui.theme.PokeApiComposeTheme
+import com.example.pokeapicompose.ui.views.PokemonListScreen
+import com.example.pokeapicompose.viewmodel.PokemonListViewModel
+import com.example.pokeapicompose.viewmodel.PokemonViewModelFactory
 
 class MainActivity : ComponentActivity() {
+    private val appContainer = AppContainer()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        val viewModelFactory = PokemonViewModelFactory(appContainer.pokemonRepository)
+        val viewModel = ViewModelProvider(this, viewModelFactory)
+            .get(PokemonListViewModel::class.java)
+
         setContent {
             PokeApiComposeTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+                PokemonListScreen(viewModel)
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    PokeApiComposeTheme {
-        Greeting("Android")
     }
 }
