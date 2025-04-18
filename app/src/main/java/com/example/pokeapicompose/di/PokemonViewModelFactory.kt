@@ -1,8 +1,9 @@
-package com.example.pokeapicompose.viewmodel
+package com.example.pokeapicompose.di
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.pokeapicompose.data.repository.PokemonRepository
+import com.example.pokeapicompose.viewmodel.PokemonListViewModel
 
 class PokemonViewModelFactory(
     private val repository: PokemonRepository

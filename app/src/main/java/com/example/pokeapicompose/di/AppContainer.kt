@@ -1,4 +1,4 @@
-package com.example.pokeapicompose
+package com.example.pokeapicompose.di
 
 import com.example.pokeapicompose.data.remote.PokeApiService
 import com.example.pokeapicompose.data.repository.PokemonRepository
