@@ -15,9 +15,9 @@ interface PokeApiService {
         @Query("offset") offset: Int = 0
     ): PokemonListResponse
 
-    // Llama a: https://pokeapi.co/api/v2/pokemon/{name}
-    @GET("pokemon/{name}")
+    // Llama a: https://pokeapi.co/api/v2/pokemon/{id}
+    @GET("pokemon/{id}")
     suspend fun getPokemonDetail(
-        @Path("name") name: String
+        @Path("id") id: Int
     ): PokemonDetail
 }

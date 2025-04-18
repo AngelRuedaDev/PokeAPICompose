@@ -15,5 +15,5 @@ data class PokemonItem(
         get() = url.trimEnd('/').split("/").last().toInt()
 
     val spriteUrl: String
-        get() = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/$id.png"
+        get() = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/${id}.png"
 }

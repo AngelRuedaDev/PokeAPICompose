@@ -76,4 +76,7 @@ dependencies {
     //Palette
     implementation(libs.androidx.palette.ktx)
 
+    //NavController
+    implementation(libs.androidx.navigation.compose)
+
 }

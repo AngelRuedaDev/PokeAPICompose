@@ -1,5 +1,6 @@
 package com.example.pokeapicompose.ui.views
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -19,13 +20,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.pokeapicompose.data.model.PokemonItem
 import com.example.pokeapicompose.data.model.PokemonListResponse
 import com.example.pokeapicompose.viewmodel.PokemonListViewModel
 
 @Composable
-fun PokemonListScreen(viewModel: PokemonListViewModel) {
+fun PokemonListScreen(viewModel: PokemonListViewModel, navController: NavController) {
     val pokemonListState = viewModel.pokemonList.collectAsState()
     val isLoading = viewModel.isLoading.collectAsState()
     val error = viewModel.error.collectAsState()
@@ -53,7 +55,7 @@ fun PokemonListScreen(viewModel: PokemonListViewModel) {
 
             pokemonListState.value != null -> {
 
-                PokemonList(pokemonListState.value!!)
+                PokemonList(pokemonListState.value!!, navController)
             }
         }
     }
@@ -71,13 +73,16 @@ fun Title(title: String) {
 }
 
 @Composable
-fun PokemonList(pokemonListResponse: PokemonListResponse) {
+fun PokemonList(pokemonListResponse: PokemonListResponse, navController: NavController) {
     Column() {
         Title("Pokemon List")
         LazyColumn(modifier = Modifier.fillMaxSize()) {
             items(pokemonListResponse.results) { pokemon ->
+                //Log.d("PKM", pokemon.url+" "+pokemon.name+" "+pokemon.id)
                 PokemonListItem(pokemon = pokemon) {
                     // navegar a la pantalla de detalle
+
+                    navController.navigate("pokemon_detail/${pokemon.id}")
                 }
             }
         }

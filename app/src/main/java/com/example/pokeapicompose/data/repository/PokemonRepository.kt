@@ -14,9 +14,9 @@ class PokemonRepository(private val pokeApiService: PokeApiService) {
         }
     }
 
-    suspend fun getPokemonDetail(name: String): PokemonDetail {
+    suspend fun getPokemonDetail(id: Int): PokemonDetail {
         return withContext(Dispatchers.IO) {
-            pokeApiService.getPokemonDetail(name)
+            pokeApiService.getPokemonDetail(id)
         }
     }
 }

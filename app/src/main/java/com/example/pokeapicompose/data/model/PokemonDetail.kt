@@ -3,13 +3,15 @@ package com.example.pokeapicompose.data.model
 data class PokemonDetail(
     val id: Int,
     val name: String,
-    val sprites: Sprites,
-    val types: List<PokemonType>
-)
+    val types: List<PokemonType>,
+    val weight: String
+){
+    val spriteUrl: String
+        get() = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/${id}.png"
 
-data class Sprites(
-    val front_default: String?
-)
+    val spriteShinyUrl: String
+        get() = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/shiny/${id}.png"
+}
 
 data class PokemonType(
     val slot: Int,
