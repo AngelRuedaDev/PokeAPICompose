@@ -1,8 +1,10 @@
 package com.example.pokeapicompose.ui.views
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,6 +23,9 @@ import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
@@ -40,15 +45,20 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import com.example.pokeapicompose.data.model.PokemonDetail
 import com.example.pokeapicompose.ui.theme.TypeColorProvider
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import com.example.pokeapicompose.data.model.PokemonItem
+import com.example.pokeapicompose.data.navigation.AppScreens
 
 @Composable
 fun PokemonDetailScreen(id: Int, viewModel: PokemonDetailViewModel) {
     val pokemon by viewModel.pokemon.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
     val error by viewModel.error.collectAsState()
+    val evolutionItems by viewModel.evolutionItems.collectAsState()
 
     LaunchedEffect(id) {
         viewModel.fetchPokemon(id)
@@ -65,20 +75,7 @@ fun PokemonDetailScreen(id: Int, viewModel: PokemonDetailViewModel) {
             error != null -> Text(error ?: "Error", Modifier.align(Alignment.Center))
             pokemon != null -> {
                 Column {
-                    /*Text("Name: ${pokemon!!.name}", fontSize = 24.sp)
-                    Text("Weight: ${pokemon!!.weight}")
-                    Text("Types: ${pokemon!!.types.joinToString(", ") { it.type.name }}")
-                    AsyncImage(
-                        model = pokemon!!.spriteUrl,
-                        contentDescription = pokemon!!.name
-                    )
-
-                    AsyncImage(
-                        model = pokemon!!.spriteShinyUrl,
-                        contentDescription = "Pokemon Image"
-                    )*/
-
-                    PokemonDetail(pokemon!!)
+                    PokemonDetail(pokemon!!, evolutionItems)
                 }
             }
         }
@@ -86,10 +83,39 @@ fun PokemonDetailScreen(id: Int, viewModel: PokemonDetailViewModel) {
 }
 
 @Composable
-fun PokemonDetail(pokemon: PokemonDetail) {
-    PokemonDetailTitle(pokemon)
-    PokemonDetailImages(pokemon)
-    PokemonDetailInformation(pokemon)
+fun PokemonDetail(pokemon: PokemonDetail, evolutionItems: List<PokemonItem>) {
+    val scrollState = rememberScrollState()
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(scrollState)
+            .padding(bottom = 16.dp) // Opcional, margen inferior para que no corte contenido
+    ) {
+        PokemonDetailTitle(pokemon)
+        PokemonDetailImages(pokemon)
+        PokemonDetailInformation(pokemon)
+
+        // Solo mostramos Evolutions si hay más de un Pokémon en la cadena evolutiva
+        if (evolutionItems.size > 1) {
+            Evolutions(evolutionItems, pokemon)
+        }
+    }
+}
+
+@Composable
+fun Evolutions(evolutionItems: List<PokemonItem>, currentPokemon: PokemonDetail) {
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Title("Evolutions:")
+        Spacer(modifier = Modifier.height(8.dp))
+        evolutionItems.forEach { pokemon ->
+            PokemonEvolutionItem(
+                pokemon = pokemon,
+                isCurrentPokemon = pokemon.id == currentPokemon.id // Comparación de IDs
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+        }
+    }
 }
 
 
@@ -212,9 +238,6 @@ fun PokemonDetailInformation(pokemon: PokemonDetail) {
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun PokemonDetailTypes(pokemon: PokemonDetail){
-
-
-
     FlowRow(modifier = Modifier
         .fillMaxWidth()
         .padding(top = 16.dp, start = 16.dp, end = 16.dp),
@@ -282,10 +305,52 @@ fun PillItem(type: String) {
     }
 }
 
-fun hectogramsToKilograms(hectograms: Int): Float {
+
+private fun hectogramsToKilograms(hectograms: Int): Float {
     return hectograms / 10f
 }
 
-fun decimetersToCentimeters(decimeters: Int): Int {
+private fun decimetersToCentimeters(decimeters: Int): Int {
     return decimeters * 10
+}
+
+@Composable
+fun PokemonEvolutionItem(
+    pokemon: PokemonItem,
+    isCurrentPokemon: Boolean
+) {
+    val cardColor = if (isCurrentPokemon) Color.Red else Color.White  // Rojo si es el Pokémon actual
+
+    ElevatedCard(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(120.dp)
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 5.dp),
+        colors = CardDefaults.elevatedCardColors(
+            containerColor = cardColor, // Color condicional
+            contentColor = MaterialTheme.colorScheme.secondary
+        )
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(16.dp)
+        ) {
+            AsyncImage(
+                model = pokemon.spriteUrl,
+                contentDescription = pokemon.name,
+                modifier = Modifier
+                    .size(90.dp)
+                    .padding(end = 16.dp)
+            )
+
+            Text(
+                text = pokemon.name.replaceFirstChar { it.uppercase() },
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Start,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Normal
+            )
+        }
+    }
 }

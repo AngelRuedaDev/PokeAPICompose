@@ -75,7 +75,6 @@ fun PokemonList(pokemonListResponse: PokemonListResponse, navController: NavCont
                 //Log.d("PKM", pokemon.url+" "+pokemon.name+" "+pokemon.id)
                 PokemonListItem(pokemon = pokemon) {
                     // navegar a la pantalla de detalle
-
                     navController.navigate(route = AppScreens.PokemonDetailScreen.route + "/${pokemon.id}")
                 }
             }
