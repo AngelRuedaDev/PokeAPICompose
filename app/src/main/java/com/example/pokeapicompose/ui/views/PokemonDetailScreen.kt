@@ -2,8 +2,12 @@ package com.example.pokeapicompose.ui.views
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -34,7 +38,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import com.example.pokeapicompose.data.model.PokemonDetail
+import com.example.pokeapicompose.ui.theme.TypeColorProvider
 
 @Composable
 fun PokemonDetailScreen(id: Int, viewModel: PokemonDetailViewModel) {
@@ -196,20 +204,88 @@ fun PokemonDetailInformation(pokemon: PokemonDetail) {
             contentColor = MaterialTheme.colorScheme.secondary
         )
     ) {
-        //Flexbox con tipos
-
+        PokemonDetailTypes(pokemon)
         Information(pokemon)
+    }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+fun PokemonDetailTypes(pokemon: PokemonDetail){
+
+
+
+    FlowRow(modifier = Modifier
+        .fillMaxWidth()
+        .padding(top = 16.dp, start = 16.dp, end = 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+    ){
+        pokemon.types.forEach { type->
+            PillItem(type.type.name)
+        }
     }
 }
 
 @Composable
 fun Information(pokemon: PokemonDetail) {
+
+    val weightInKg = hectogramsToKilograms(pokemon.weight.toInt())
+    val heightInCm = decimetersToCentimeters(pokemon.height.toInt())
+
     Column(modifier = Modifier
         .fillMaxWidth()
         .padding(vertical = 20.dp, horizontal = 16.dp)) {
 
+
         Text("Weight", fontSize = 20.sp, fontWeight = FontWeight.Bold)
-        Text("${pokemon.weight} kg", fontSize = 20.sp, fontWeight = FontWeight.Normal)
+        Text("$weightInKg kg", fontSize = 20.sp, fontWeight = FontWeight.Normal)
+        Spacer(modifier = Modifier.fillMaxWidth().height(10.dp))
+        Text("Height", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+        Text("$heightInCm cm", fontSize = 20.sp, fontWeight = FontWeight.Normal)
 
     }
+}
+
+@Composable
+fun PillItem(type: String) {
+    val bgColor = TypeColorProvider.getColorForType(type)
+
+    val borderColor = bgColor.copy(
+        red = bgColor.red * 0.8f,
+        green = bgColor.green * 0.8f,
+        blue = bgColor.blue * 0.8f
+    )
+
+    Box(
+        modifier = Modifier
+            .background(
+                color = bgColor,
+                shape = RoundedCornerShape(50)
+            )
+            .border(
+                width = 2.dp,
+                color = borderColor,
+                shape = RoundedCornerShape(50)
+            )
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+
+
+    ) {
+        Text(
+            text = type.replaceFirstChar { it.uppercase() },
+            color = Color.Black,
+            style = MaterialTheme.typography.bodyLarge,
+            textAlign = TextAlign.Center,
+            fontSize = 20.sp
+        )
+    }
+}
+
+fun hectogramsToKilograms(hectograms: Int): Float {
+    return hectograms / 10f
+}
+
+fun decimetersToCentimeters(decimeters: Int): Int {
+    return decimeters * 10
 }

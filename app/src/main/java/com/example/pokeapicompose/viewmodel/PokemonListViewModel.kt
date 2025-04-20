@@ -26,7 +26,7 @@ class PokemonListViewModel(private val repository: PokemonRepository) : ViewMode
         viewModelScope.launch {
             _isLoading.value = true
             try {
-                val response = repository.getPokemonList(limit = 151)
+                val response = repository.getPokemonList(limit = 100000)
                 _pokemonList.value = response
             } catch (e: Exception) {
                 _error.value = e.localizedMessage ?: "Unknown error"

@@ -4,7 +4,8 @@ data class PokemonDetail(
     val id: Int,
     val name: String,
     val types: List<PokemonType>,
-    val weight: String
+    val weight: String,
+    val height: String
 ){
     val spriteUrl: String
         get() = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/${id}.png"

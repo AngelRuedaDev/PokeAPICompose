@@ -1,29 +1,26 @@
 package com.example.pokeapicompose.ui.views
 
-import android.util.Log
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
-import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.pokeapicompose.data.model.PokemonItem
 import com.example.pokeapicompose.data.model.PokemonListResponse
+import com.example.pokeapicompose.data.navigation.AppScreens
 import com.example.pokeapicompose.viewmodel.PokemonListViewModel
 
 @Composable
@@ -32,14 +29,12 @@ fun PokemonListScreen(viewModel: PokemonListViewModel, navController: NavControl
     val isLoading = viewModel.isLoading.collectAsState()
     val error = viewModel.error.collectAsState()
 
-
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
             .padding(WindowInsets.systemBars.only(WindowInsetsSides.Top).asPaddingValues())
     ) {
-
         when {
             isLoading.value -> {
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
@@ -54,7 +49,6 @@ fun PokemonListScreen(viewModel: PokemonListViewModel, navController: NavControl
             }
 
             pokemonListState.value != null -> {
-
                 PokemonList(pokemonListState.value!!, navController)
             }
         }
@@ -82,7 +76,7 @@ fun PokemonList(pokemonListResponse: PokemonListResponse, navController: NavCont
                 PokemonListItem(pokemon = pokemon) {
                     // navegar a la pantalla de detalle
 
-                    navController.navigate("pokemon_detail/${pokemon.id}")
+                    navController.navigate(route = AppScreens.PokemonDetailScreen.route + "/${pokemon.id}")
                 }
             }
         }
@@ -129,5 +123,18 @@ fun PokemonListItem(
             )
         }
     }
+}
+
+@Composable
+fun SearchBar(query: String, onQueryChanged: (String) -> Unit) {
+    OutlinedTextField(
+        value = query,
+        onValueChange = onQueryChanged,
+        label = { Text("Search Pokémon") },
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        singleLine = true
+    )
 }
 

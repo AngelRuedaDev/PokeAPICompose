@@ -16,51 +16,26 @@ import com.example.pokeapicompose.di.PokemonViewModelFactory
 import androidx.navigation.NavType
 import androidx.navigation.compose.*
 import androidx.navigation.navArgument
+import com.example.pokeapicompose.data.navigation.AppNavigation
 import com.example.pokeapicompose.di.PokemonDetailViewModelFactory
 import com.example.pokeapicompose.ui.views.PokemonDetailScreen
 
 class MainActivity : ComponentActivity() {
-    private val appContainer = AppContainer()
+    //private val appContainer = AppContainer()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        val viewModelFactory = PokemonViewModelFactory(appContainer.pokemonRepository)
+        /*val viewModelFactory = PokemonViewModelFactory(appContainer.pokemonRepository)
         val viewModel = ViewModelProvider(this, viewModelFactory)
-            .get(PokemonListViewModel::class.java)
+            .get(PokemonListViewModel::class.java)*/
 
 
 
         setContent {
             PokeApiComposeTheme {
-                AppNavigation(viewModel)
-            }
-        }
-    }
-
-    @Composable
-    fun AppNavigation(viewModel: PokemonListViewModel){
-        val navController = rememberNavController()
-
-        NavHost(navController = navController, startDestination = "pokemon_list") {
-            composable("pokemon_list") {
-                PokemonListScreen(viewModel, navController)
-            }
-
-            composable(
-                "pokemon_detail/{id}",
-                arguments = listOf(navArgument("id") { type = NavType.IntType })
-            ) { backStackEntry ->
-                val id = backStackEntry.arguments?.getInt("id") ?: 1
-
-                val detailViewModelFactory = PokemonDetailViewModelFactory(appContainer.pokemonRepository)
-                val detailViewModel = ViewModelProvider(this@MainActivity, detailViewModelFactory)
-                    .get("pokemon_detail_$id", PokemonDetailViewModel::class.java)
-
-                // Nota: esto usa una "key" para no compartir instancia entre Pokémon
-
-                PokemonDetailScreen(id = id, viewModel = detailViewModel)
+                AppNavigation()
             }
         }
     }

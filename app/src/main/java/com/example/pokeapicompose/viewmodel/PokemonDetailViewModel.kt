@@ -3,7 +3,6 @@ package com.example.pokeapicompose.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.pokeapicompose.data.model.PokemonDetail
-import com.example.pokeapicompose.data.model.PokemonListResponse
 import com.example.pokeapicompose.data.repository.PokemonRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
