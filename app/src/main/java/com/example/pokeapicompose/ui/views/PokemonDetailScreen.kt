@@ -49,9 +49,13 @@ import com.example.pokeapicompose.data.model.PokemonDetail
 import com.example.pokeapicompose.ui.theme.TypeColorProvider
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.verticalScroll
+import com.example.pokeapicompose.R
 import com.example.pokeapicompose.data.model.PokemonItem
 import com.example.pokeapicompose.data.navigation.AppScreens
+import com.example.pokeapicompose.ui.*
+import com.example.pokeapicompose.ui.theme.SoftBlue
 
 @Composable
 fun PokemonDetailScreen(id: Int, viewModel: PokemonDetailViewModel) {
@@ -319,16 +323,23 @@ fun PokemonEvolutionItem(
     pokemon: PokemonItem,
     isCurrentPokemon: Boolean
 ) {
-    val cardColor = if (isCurrentPokemon) Color.Red else Color.White  // Rojo si es el Pokémon actual
+    //val cardColor = if (isCurrentPokemon) SoftBlue else Color.White
 
+    val borderModifier = if (isCurrentPokemon) {
+        Modifier.border(width = 4.dp, color = SoftBlue, shape = RoundedCornerShape(8.dp))
+    } else {
+        Modifier //
+    }
     ElevatedCard(
         modifier = Modifier
             .fillMaxWidth()
             .height(120.dp)
-            .padding(horizontal = 16.dp, vertical = 8.dp),
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .then(borderModifier)
+            ,
         elevation = CardDefaults.elevatedCardElevation(defaultElevation = 5.dp),
         colors = CardDefaults.elevatedCardColors(
-            containerColor = cardColor, // Color condicional
+            containerColor = Color.White,
             contentColor = MaterialTheme.colorScheme.secondary
         )
     ) {

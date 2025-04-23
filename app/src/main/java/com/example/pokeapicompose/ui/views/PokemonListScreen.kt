@@ -1,6 +1,5 @@
 package com.example.pokeapicompose.ui.views
 
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -25,9 +24,10 @@ import com.example.pokeapicompose.viewmodel.PokemonListViewModel
 
 @Composable
 fun PokemonListScreen(viewModel: PokemonListViewModel, navController: NavController) {
-    val pokemonListState = viewModel.pokemonList.collectAsState()
+    val pokemonFiltered  = viewModel.pokemonFilteredList.collectAsState()
     val isLoading = viewModel.isLoading.collectAsState()
     val error = viewModel.error.collectAsState()
+    val searchQuery = viewModel.searchQuery.collectAsState()
 
     Box(
         modifier = Modifier
@@ -48,8 +48,15 @@ fun PokemonListScreen(viewModel: PokemonListViewModel, navController: NavControl
                 )
             }
 
-            pokemonListState.value != null -> {
-                PokemonList(pokemonListState.value!!, navController)
+            else -> {
+                Column {
+                    SearchBar(
+                        query = searchQuery.value,
+                        onQueryChanged = { viewModel.onSearchQueryChanged(it) }
+                    )
+
+                    PokemonList(pokemonFiltered.value, navController)
+                }
             }
         }
     }

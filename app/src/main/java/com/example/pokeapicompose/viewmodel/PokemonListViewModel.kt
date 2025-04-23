@@ -2,10 +2,14 @@ package com.example.pokeapicompose.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.pokeapicompose.data.model.PokemonItem
 import com.example.pokeapicompose.data.model.PokemonListResponse
 import com.example.pokeapicompose.data.repository.PokemonRepository
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class PokemonListViewModel(private val repository: PokemonRepository) : ViewModel() {
@@ -18,6 +22,20 @@ class PokemonListViewModel(private val repository: PokemonRepository) : ViewMode
     private val _error = MutableStateFlow<String?>(null)
     val error: StateFlow<String?> = _error
 
+    private val _searchQuery = MutableStateFlow("")
+    val searchQuery: StateFlow<String> = _searchQuery
+
+    val pokemonFilteredList: StateFlow<PokemonListResponse> = combine(
+        pokemonList,
+        searchQuery
+    ) { list, query ->
+        filterPokemonList(list, query)
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.Eagerly,
+        PokemonListResponse(0, null, null, emptyList())
+    )
+
     init {
         fetchPokemonList()
     }
@@ -27,12 +45,32 @@ class PokemonListViewModel(private val repository: PokemonRepository) : ViewMode
             _isLoading.value = true
             try {
                 val response = repository.getPokemonList(limit = 100000)
-                _pokemonList.value = response
+                val filteredList = filterToNotShow(response.results)
+                _pokemonList.value = PokemonListResponse(response.count, response.next, response.previous, filteredList)
             } catch (e: Exception) {
                 _error.value = e.localizedMessage ?: "Unknown error"
             } finally {
                 _isLoading.value = false
             }
         }
+    }
+
+    fun onSearchQueryChanged(query: String) {
+        _searchQuery.value = query
+    }
+
+    private fun filterPokemonList(list: PokemonListResponse?, query: String): PokemonListResponse {
+        if (list == null) return PokemonListResponse(0, null, null, emptyList())
+        if (query.isBlank()) return list
+
+        val filtered = list.results.filter {
+            it.name.contains(query.trim(), ignoreCase = true)
+        }
+
+        return list.copy(results = filtered)
+    }
+
+    private fun filterToNotShow(pokemonList: List<PokemonItem>): List<PokemonItem> {
+        return pokemonList.filterNot { it.name.contains("-", ignoreCase = true) }
     }
 }
