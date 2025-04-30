@@ -17,10 +17,10 @@ data class PokemonDetail(
 
 data class PokemonType(
     val slot: Int,
-    val type: TypeInfo
+    val type: PokemonTypeInfo
 )
 
-data class TypeInfo(
+data class PokemonTypeInfo(
     val name: String,
     val url: String
 )

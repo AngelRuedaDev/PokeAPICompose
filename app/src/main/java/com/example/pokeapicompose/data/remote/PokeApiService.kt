@@ -4,6 +4,8 @@ import com.example.pokeapicompose.data.model.EvolutionChain
 import com.example.pokeapicompose.data.model.PokemonDetail
 import com.example.pokeapicompose.data.model.PokemonListResponse
 import com.example.pokeapicompose.data.model.PokemonSpecie
+import com.example.pokeapicompose.data.model.TypeInfo
+import com.example.pokeapicompose.data.model.TypeListResponse
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -38,4 +40,15 @@ interface PokeApiService {
     // Llama a: https://pokeapi.co/api/v2/evolution-chain/{id}
     @GET("evolution-chain/{id}/")
     suspend fun getEvolutionChain(@Path("id") id: Int): EvolutionChain
+
+    // Llama a: https://pokeapi.co/api/v2/type?limit=50
+    @GET("type")
+    suspend fun getTypesList(
+        @Query("limit") limit: Int = 50,
+        @Query("offset") offset: Int = 0
+    ): TypeListResponse
+
+    // Llama a: https://pokeapi.co/api/v2/type/{name}
+    @GET("type/{typeName}")
+    suspend fun getTypeDetail(@Path("typeName") typeName: String): TypeInfo
 }

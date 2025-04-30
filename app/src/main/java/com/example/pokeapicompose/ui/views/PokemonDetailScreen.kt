@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,9 +22,6 @@ import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
@@ -47,14 +43,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.text.style.TextAlign
 import com.example.pokeapicompose.data.model.PokemonDetail
 import com.example.pokeapicompose.ui.theme.TypeColorProvider
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.verticalScroll
-import com.example.pokeapicompose.R
 import com.example.pokeapicompose.data.model.PokemonItem
-import com.example.pokeapicompose.data.navigation.AppScreens
-import com.example.pokeapicompose.ui.*
 import com.example.pokeapicompose.ui.theme.SoftBlue
 
 @Composable
@@ -141,7 +132,7 @@ fun PokemonDetailTitle(pokemon: PokemonDetail) {
             modifier = Modifier.fillMaxWidth(),
             fontSize = 32.sp,
             fontWeight = FontWeight.Normal,
-            color = MaterialTheme.colorScheme.tertiary
+            color = MaterialTheme.colorScheme.primary
         )
     }
 

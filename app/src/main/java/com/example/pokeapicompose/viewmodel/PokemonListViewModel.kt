@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.pokeapicompose.data.model.PokemonItem
 import com.example.pokeapicompose.data.model.PokemonListResponse
+import com.example.pokeapicompose.data.model.TypeListResponse
 import com.example.pokeapicompose.data.repository.PokemonRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -25,6 +26,9 @@ class PokemonListViewModel(private val repository: PokemonRepository) : ViewMode
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery
 
+    private val _typesList = MutableStateFlow<TypeListResponse?>(null)
+    val typesList: StateFlow<TypeListResponse?> = _typesList
+
     val pokemonFilteredList: StateFlow<PokemonListResponse> = combine(
         pokemonList,
         searchQuery
@@ -38,6 +42,7 @@ class PokemonListViewModel(private val repository: PokemonRepository) : ViewMode
 
     init {
         fetchPokemonList()
+        fetchTypesList()
     }
 
     private fun fetchPokemonList() {
@@ -47,6 +52,41 @@ class PokemonListViewModel(private val repository: PokemonRepository) : ViewMode
                 val response = repository.getPokemonList(limit = 100000)
                 val filteredList = filterToNotShow(response.results)
                 _pokemonList.value = PokemonListResponse(response.count, response.next, response.previous, filteredList)
+            } catch (e: Exception) {
+                _error.value = e.localizedMessage ?: "Unknown error"
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
+
+    private fun fetchTypesList() {
+        viewModelScope.launch {
+            _isLoading.value = true
+            try {
+                val response = repository.getTypesList()
+
+                _typesList.value = TypeListResponse(response.results)
+            } catch (e: Exception) {
+                _error.value = e.localizedMessage ?: "Unknown error"
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
+
+    fun searchPokemonByType(pokemonType: String) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            try {
+                val response = repository.getPokemonsByType(pokemonType)
+                val pokemonItems = response.pokemon.map { it.pokemon }
+                _pokemonList.value = PokemonListResponse(
+                    count = pokemonItems.size,
+                    next = null,
+                    previous = null,
+                    results = pokemonItems
+                )
             } catch (e: Exception) {
                 _error.value = e.localizedMessage ?: "Unknown error"
             } finally {
