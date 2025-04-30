@@ -9,6 +9,7 @@ import com.example.pokeapicompose.data.repository.PokemonRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -28,6 +29,9 @@ class PokemonListViewModel(private val repository: PokemonRepository) : ViewMode
 
     private val _typesList = MutableStateFlow<TypeListResponse?>(null)
     val typesList: StateFlow<TypeListResponse?> = _typesList
+
+    private val _selectedType = MutableStateFlow<String?>(null)
+    val selectedType: StateFlow<String?> = _selectedType.asStateFlow()
 
     val pokemonFilteredList: StateFlow<PokemonListResponse> = combine(
         pokemonList,
@@ -65,8 +69,7 @@ class PokemonListViewModel(private val repository: PokemonRepository) : ViewMode
             _isLoading.value = true
             try {
                 val response = repository.getTypesList()
-
-                _typesList.value = TypeListResponse(response.results)
+                _typesList.value = TypeListResponse(response.results.dropLast(3)) //delete unknown, stellar and shadow types
             } catch (e: Exception) {
                 _error.value = e.localizedMessage ?: "Unknown error"
             } finally {
@@ -97,6 +100,15 @@ class PokemonListViewModel(private val repository: PokemonRepository) : ViewMode
 
     fun onSearchQueryChanged(query: String) {
         _searchQuery.value = query
+    }
+
+    fun onTypeSelected(type: String?) {
+        _selectedType.value = type
+        if (type == null) {
+            fetchPokemonList() // Lista completa
+        } else {
+            searchPokemonByType(type)
+        }
     }
 
     private fun filterPokemonList(list: PokemonListResponse?, query: String): PokemonListResponse {
