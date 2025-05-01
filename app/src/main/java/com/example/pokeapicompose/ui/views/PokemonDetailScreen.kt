@@ -1,7 +1,6 @@
 package com.example.pokeapicompose.ui.views
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -22,9 +21,7 @@ import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -39,12 +36,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.example.pokeapicompose.R
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.text.style.TextAlign
 import com.example.pokeapicompose.data.model.PokemonDetail
 import com.example.pokeapicompose.ui.theme.TypeColorProvider
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Surface
+import androidx.compose.ui.res.stringResource
 import com.example.pokeapicompose.data.model.PokemonItem
 import com.example.pokeapicompose.ui.theme.SoftBlue
 
@@ -67,7 +67,7 @@ fun PokemonDetailScreen(id: Int, viewModel: PokemonDetailViewModel) {
     ) {
         when {
             isLoading -> CircularProgressIndicator(Modifier.align(Alignment.Center))
-            error != null -> Text(error ?: "Error", Modifier.align(Alignment.Center))
+            error != null -> Text(error ?: stringResource(id = R.string.unknown_error), Modifier.align(Alignment.Center))
             pokemon != null -> {
                 Column {
                     PokemonDetail(pokemon!!, evolutionItems)
@@ -85,13 +85,13 @@ fun PokemonDetail(pokemon: PokemonDetail, evolutionItems: List<PokemonItem>) {
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(scrollState)
-            .padding(bottom = 16.dp) // Opcional, margen inferior para que no corte contenido
+            .padding(bottom = 16.dp)
     ) {
         PokemonDetailTitle(pokemon)
         PokemonDetailImages(pokemon)
         PokemonDetailInformation(pokemon)
 
-        // Solo mostramos Evolutions si hay más de un Pokémon en la cadena evolutiva
+        // Only show evolutions if there is more than 1 evolution on the list
         if (evolutionItems.size > 1) {
             Evolutions(evolutionItems, pokemon)
         }
@@ -101,12 +101,12 @@ fun PokemonDetail(pokemon: PokemonDetail, evolutionItems: List<PokemonItem>) {
 @Composable
 fun Evolutions(evolutionItems: List<PokemonItem>, currentPokemon: PokemonDetail) {
     Column(modifier = Modifier.fillMaxWidth()) {
-        Title("Evolutions:")
+        Title(stringResource(id = R.string.evolutions_title))
         Spacer(modifier = Modifier.height(8.dp))
         evolutionItems.forEach { pokemon ->
             PokemonEvolutionItem(
                 pokemon = pokemon,
-                isCurrentPokemon = pokemon.id == currentPokemon.id // Comparación de IDs
+                isCurrentPokemon = pokemon.id == currentPokemon.id // Compare IDs
             )
             Spacer(modifier = Modifier.height(8.dp))
         }
@@ -125,14 +125,14 @@ fun PokemonDetailTitle(pokemon: PokemonDetail) {
             modifier = Modifier.fillMaxWidth(),
             fontSize = 36.sp,
             fontWeight = FontWeight.SemiBold,
-            color = MaterialTheme.colorScheme.secondary
+            color = MaterialTheme.colorScheme.onBackground
         )
         Text(
             "#${String.format("%03d", pokemon.id)}",
             modifier = Modifier.fillMaxWidth(),
             fontSize = 32.sp,
             fontWeight = FontWeight.Normal,
-            color = MaterialTheme.colorScheme.primary
+            color = MaterialTheme.colorScheme.tertiary
         )
     }
 
@@ -152,15 +152,14 @@ fun PokemonDetailImages(pokemon: PokemonDetail) {
                 .padding(8.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            ElevatedCard(
+            Surface(
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(1f),
-                elevation = CardDefaults.elevatedCardElevation(defaultElevation = 5.dp),
-                colors = CardDefaults.elevatedCardColors(
-                    containerColor = Color.White,
-                    contentColor = MaterialTheme.colorScheme.secondary
-                )
+                color = MaterialTheme.colorScheme.surface,
+                contentColor = MaterialTheme.colorScheme.onSurface,
+                shape = RoundedCornerShape(12.dp),
+                shadowElevation = 5.dp
             ) {
                 Box(
                     modifier = Modifier.fillMaxSize(),
@@ -175,7 +174,7 @@ fun PokemonDetailImages(pokemon: PokemonDetail) {
                 }
             }
             Spacer(modifier = Modifier.height(8.dp))
-            Text("Regular", fontWeight = FontWeight.Light)
+            Text(stringResource(id = R.string.regular), fontWeight = FontWeight.Light, color = MaterialTheme.colorScheme.onBackground)
         }
 
         // --- Shiny ---
@@ -185,15 +184,14 @@ fun PokemonDetailImages(pokemon: PokemonDetail) {
                 .padding(8.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            ElevatedCard(
+            Surface(
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(1f),
-                elevation = CardDefaults.elevatedCardElevation(defaultElevation = 5.dp),
-                colors = CardDefaults.elevatedCardColors(
-                    containerColor = Color.White,
-                    contentColor = MaterialTheme.colorScheme.secondary
-                )
+                color = MaterialTheme.colorScheme.surface,
+                contentColor = MaterialTheme.colorScheme.onSurface,
+                shape = RoundedCornerShape(12.dp),
+                shadowElevation = 5.dp
             ) {
                 Box(
                     modifier = Modifier.fillMaxSize(),
@@ -208,25 +206,26 @@ fun PokemonDetailImages(pokemon: PokemonDetail) {
                 }
             }
             Spacer(modifier = Modifier.height(8.dp))
-            Text("Shiny", fontWeight = FontWeight.Light)
+            Text(stringResource(id = R.string.shiny), fontWeight = FontWeight.Light, color = MaterialTheme.colorScheme.onBackground)
         }
     }
 }
 
 @Composable
 fun PokemonDetailInformation(pokemon: PokemonDetail) {
-    ElevatedCard(
+    Surface(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 18.dp),
-        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 5.dp),
-        colors = CardDefaults.elevatedCardColors(
-            containerColor = Color.White,
-            contentColor = MaterialTheme.colorScheme.secondary
-        )
-    ) {
-        PokemonDetailTypes(pokemon)
-        Information(pokemon)
+        color = MaterialTheme.colorScheme.surface,
+        contentColor = MaterialTheme.colorScheme.onSurface,
+        shape = RoundedCornerShape(12.dp),
+        shadowElevation = 5.dp
+    ){
+        Column {
+            PokemonDetailTypes(pokemon)
+            Information(pokemon)
+        }
     }
 }
 
@@ -256,10 +255,10 @@ fun Information(pokemon: PokemonDetail) {
         .padding(vertical = 20.dp, horizontal = 16.dp)) {
 
 
-        Text("Weight", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+        Text(stringResource(id = R.string.weight), fontSize = 20.sp, fontWeight = FontWeight.Bold)
         Text("$weightInKg kg", fontSize = 20.sp, fontWeight = FontWeight.Normal)
         Spacer(modifier = Modifier.fillMaxWidth().height(10.dp))
-        Text("Height", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+        Text(stringResource(id = R.string.height), fontSize = 20.sp, fontWeight = FontWeight.Bold)
         Text("$heightInCm cm", fontSize = 20.sp, fontWeight = FontWeight.Normal)
 
     }
@@ -314,25 +313,22 @@ fun PokemonEvolutionItem(
     pokemon: PokemonItem,
     isCurrentPokemon: Boolean
 ) {
-    //val cardColor = if (isCurrentPokemon) SoftBlue else Color.White
-
+    //If the pokemon is the one that we are currently looking add a border to show it to the user
     val borderModifier = if (isCurrentPokemon) {
         Modifier.border(width = 4.dp, color = SoftBlue, shape = RoundedCornerShape(8.dp))
     } else {
         Modifier //
     }
-    ElevatedCard(
+    Surface(
         modifier = Modifier
             .fillMaxWidth()
             .height(120.dp)
             .padding(horizontal = 16.dp, vertical = 8.dp)
-            .then(borderModifier)
-            ,
-        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 5.dp),
-        colors = CardDefaults.elevatedCardColors(
-            containerColor = Color.White,
-            contentColor = MaterialTheme.colorScheme.secondary
-        )
+            .then(borderModifier),
+        color = MaterialTheme.colorScheme.surface,
+        contentColor = MaterialTheme.colorScheme.onSurface,
+        shape = RoundedCornerShape(12.dp),
+        shadowElevation = 5.dp
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,

@@ -1,3 +1,23 @@
 <resources>
     <string name="app_name">PokeApiCompose</string>
+
+    <!-- Texts -->
+    <string name="select_type">Select a type:</string>
+    <string name="clear">Clear</string>
+    <string name="confirm">Confirm</string>
+    <string name="search_pokemon">Search Pokémon:</string>
+    <string name="pokemon_list_title">Pokémon List:</string>
+
+    <string name="regular">Regular</string>
+    <string name="shiny">Shiny</string>
+    <string name="weight">Weight</string>
+    <string name="height">Height</string>
+    <string name="evolutions_title">Evolutions:</string>
+
+
+
+
+
+    <!-- Errors -->
+    <string name="unknown_error">Unknown Error</string>
 </resources>

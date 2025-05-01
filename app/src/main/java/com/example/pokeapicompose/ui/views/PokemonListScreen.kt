@@ -1,5 +1,6 @@
 package com.example.pokeapicompose.ui.views
 
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -13,9 +14,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -27,7 +29,6 @@ import com.example.pokeapicompose.data.model.PokemonItem
 import com.example.pokeapicompose.data.model.PokemonListResponse
 import com.example.pokeapicompose.data.model.TypeListResponse
 import com.example.pokeapicompose.data.navigation.AppScreens
-import com.example.pokeapicompose.ui.theme.SoftBlue
 import com.example.pokeapicompose.viewmodel.PokemonListViewModel
 import androidx.compose.runtime.remember as remember
 
@@ -53,7 +54,7 @@ fun PokemonListScreen(viewModel: PokemonListViewModel, navController: NavControl
 
             error.value != null -> {
                 Text(
-                    text = error.value ?: "Error desconocido",
+                    text = error.value ?: stringResource(id = R.string.unknown_error),
                     color = MaterialTheme.colorScheme.error,
                     modifier = Modifier.align(Alignment.Center)
                 )
@@ -61,11 +62,6 @@ fun PokemonListScreen(viewModel: PokemonListViewModel, navController: NavControl
 
             else -> {
                 Column {
-                    /*SearchBar(
-                        query = searchQuery.value,
-                        onQueryChanged = { viewModel.onSearchQueryChanged(it) }
-                    )*/
-
                     SearchSection(
                         searchQuery.value,
                         { viewModel.onSearchQueryChanged(it) },
@@ -87,7 +83,7 @@ fun Title(title: String) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(start = 18.dp, top = 18.dp, bottom = 10.dp),
-        color = MaterialTheme.colorScheme.secondary,
+        color = MaterialTheme.colorScheme.onBackground,
         fontSize = 36.sp,
         fontWeight = FontWeight.Bold
     )
@@ -99,10 +95,10 @@ fun PokemonList(
     navController: NavController,
     selectedType: String?
 ) {
-    Column() {
-        if(selectedType.isNullOrEmpty()){
-            Title("Pokemon List")
-        }else{
+    Column{
+        if (selectedType.isNullOrEmpty()) {
+            Title(stringResource(id = R.string.pokemon_list_title))
+        } else {
             Title("${selectedType.replaceFirstChar { it.uppercase() }} Type")
         }
 
@@ -110,7 +106,7 @@ fun PokemonList(
             items(pokemonListResponse.results) { pokemon ->
                 //Log.d("PKM", pokemon.url+" "+pokemon.name+" "+pokemon.id)
                 PokemonListItem(pokemon = pokemon) {
-                    // navegar a la pantalla de detalle
+                    // Go to the detail Screen
                     navController.navigate(route = AppScreens.PokemonDetailScreen.route + "/${pokemon.id}")
                 }
             }
@@ -125,17 +121,16 @@ fun PokemonListItem(
     pokemon: PokemonItem,
     onClick: () -> Unit
 ) {
-    ElevatedCard(
+    Surface(
         modifier = Modifier
             .fillMaxWidth()
             .height(120.dp)
             .padding(horizontal = 16.dp, vertical = 8.dp)
             .clickable { onClick() },
-        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 5.dp),
-        colors = CardDefaults.elevatedCardColors(
-            containerColor = Color(0xFFFFFFFF),
-            contentColor = MaterialTheme.colorScheme.secondary
-        )
+        color = MaterialTheme.colorScheme.surface,
+        contentColor = MaterialTheme.colorScheme.onSurface,
+        shape = RoundedCornerShape(12.dp),
+        shadowElevation = 5.dp
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -173,23 +168,26 @@ fun SearchSection(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 16.dp, top = 8.dp, bottom = 8.dp, end = 8.dp),
+            .padding(start = 16.dp, top = 18.dp, bottom = 8.dp, end = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         SearchBar(
             query = searchQuery,
             onQueryChanged = { onQueryChanged(it) },
-            modifier = Modifier.weight(1f).background(Color.Transparent)//ocupa el espacio disponible
+            modifier = Modifier
+                .weight(1f)
+                .shadow(5.dp, shape = RoundedCornerShape(50.dp))
+                .background(Color.Transparent)
         )
         FilterButton { openDialog.value = true }
 
-        // Aquí mostramos el dialog si openDialog es true
+        //Open the type dialog
         if (openDialog.value) {
 
             TypesDialog(
                 onDismissRequest = {
                     openDialog.value = false
-                    onTypeSelected(null) // Esto limpia el filtro
+                    onTypeSelected(null) // clean the filter
                 },
                 onTypeSelected = { type ->
                     openDialog.value = false
@@ -209,7 +207,7 @@ fun FilterButton(onClick: () -> Unit) {
         Icon(
             painter = painterResource(R.drawable.ic_filter),
             contentDescription = "Filter Icon",
-            tint = MaterialTheme.colorScheme.secondary
+            tint = MaterialTheme.colorScheme.onBackground
         )
     }
 }
@@ -220,8 +218,8 @@ fun TypesDialog(
     onTypeSelected: (String) -> Unit,
     pokemonTypesList: TypeListResponse?,
     selectedType: String?
-    ) {
-    // Si la lista es nula o vacía, no mostramos nada
+) {
+    // If the list is null or empty do not show the dialog
     if (pokemonTypesList == null || pokemonTypesList.results.isEmpty()) {
         return
     }
@@ -234,7 +232,7 @@ fun TypesDialog(
 
     AlertDialog(
         onDismissRequest = { onDismissRequest() },
-        title = { Text(text = "Selecciona un tipo") },
+        title = { Text(text = stringResource(id = R.string.select_type)) },
         text = {
             LazyColumn {
                 items(pokemonTypesList.results) { type ->
@@ -247,12 +245,18 @@ fun TypesDialog(
                     ) {
                         RadioButton(
                             selected = (type.name == currentSelectedType.value),
-                            onClick = { currentSelectedType.value = type.name }
+                            onClick = { currentSelectedType.value = type.name },
+                            colors = RadioButtonDefaults.colors(
+                                selectedColor = MaterialTheme.colorScheme.primary,
+                                unselectedColor = MaterialTheme.colorScheme.onBackground
+                            )
+
                         )
                         Text(
                             text = type.name.replaceFirstChar { it.uppercase() },
                             style = MaterialTheme.typography.bodyLarge,
-                            modifier = Modifier.padding(start = 8.dp)
+                            modifier = Modifier.padding(start = 8.dp),
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                     }
                 }
@@ -260,35 +264,54 @@ fun TypesDialog(
         },
         confirmButton = {
             TextButton(
-                onClick = { onTypeSelected(currentSelectedType.value) }
+                onClick = {
+                    if(currentSelectedType.value.isEmpty()){
+                        onDismissRequest()
+                    }else{
+                        onTypeSelected(currentSelectedType.value)
+                    }
+                }
             ) {
-                Text("Confirm")
+                Text(text = stringResource(id = R.string.confirm), color = MaterialTheme.colorScheme.onBackground)
             }
         },
         dismissButton = {
             TextButton(
                 onClick = { onDismissRequest() }
             ) {
-                Text("Clear")
+                Text(text = stringResource(id = R.string.clear), color = MaterialTheme.colorScheme.onBackground)
             }
         }
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchBar(query: String, onQueryChanged: (String) -> Unit, modifier: Modifier = Modifier) {
     TextField(
         value = query,
         onValueChange = onQueryChanged,
-        placeholder = { Text("Search Pokémon") },
+        placeholder = { Text(stringResource(id = R.string.search_pokemon)) },
         modifier = modifier,
         shape = RoundedCornerShape(50.dp),
         singleLine = true,
-        colors = TextFieldDefaults.textFieldColors(
-            containerColor = SoftBlue, // fondo del text field
-            focusedIndicatorColor = Color.Transparent, // elimina la línea inferior
-            unfocusedIndicatorColor = Color.Transparent
-        )
+        colors = TextFieldDefaults.colors(
+            focusedContainerColor = MaterialTheme.colorScheme.surface,
+            unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+            disabledContainerColor = MaterialTheme.colorScheme.surface,
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent,
+            focusedPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            unfocusedPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            disabledPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant
+        ),
+        trailingIcon = {
+            Icon(
+                painter = painterResource(R.drawable.ic_search),
+                contentDescription = "Search Icon",
+                tint = MaterialTheme.colorScheme.onBackground,
+                modifier = Modifier.padding(end = 12.dp)
+            )
+        }
+
     )
 }
