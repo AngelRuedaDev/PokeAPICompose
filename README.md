@@ -4,7 +4,23 @@ A small Android app built with **Jetpack Compose** that consumes the [PokeAPI](h
 
 ## 🖼️ Screenshots
 
-//add screenshots
+<h3>Pokémon list</h3>
+<div style="display: flex; gap: 10px;">
+  <img src="screenshots/List_Light.png" alt="Pokémon list in light mode" width="250"/>
+  <img src="screenshots/List_Dark.png" alt="Pokémon list in dark mode" width="250"/>
+</div>
+
+<h3>Type filter dialog</h3>
+<div style="display: flex; gap: 10px;">
+  <img src="screenshots/Type_List_Light.png" alt="Type filter dialog in light mode" width="250"/>
+  <img src="screenshots/Type_List_Dark.png" alt="Type filter dialog in dark mode" width="250"/>
+</div>
+
+<h3>Pokémon detail</h3>
+<div style="display: flex; gap: 10px;">
+  <img src="screenshots/Detail_Light.png" alt="Pokémon detail in light mode" width="250"/>
+  <img src="screenshots/Detail_Dark.png" alt="Pokémon detail in dark mode" width="250"/>
+</div>
 
 ## 🚀 Features
 
