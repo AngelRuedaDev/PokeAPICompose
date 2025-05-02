@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 
 data class EvolutionChain(
     @SerializedName("id") val id: Int,
-    val baby_trigger_item: Any?, // Puedes hacer una clase si algún día la necesitas
+    val baby_trigger_item: Any?,
     @SerializedName("chain") val chain: Chain
 )
 

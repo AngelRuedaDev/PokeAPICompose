@@ -1,7 +1,5 @@
 package com.example.pokeapicompose.viewmodel
 
-import android.util.Log
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.pokeapicompose.data.model.Chain
@@ -43,20 +41,22 @@ class PokemonDetailViewModel(private val repository: PokemonRepository): ViewMod
                 val response = repository.getPokemonDetail(id)
                 _pokemon.value = response
 
-                // Paso 1: obtener la URL de la cadena evolutiva
+                // Step 1: get the URL of the evolution chain
                 val evolutionUrl = repository.getPokemonEvolutionUrl(id)
                 _evolutionUrl.value = evolutionUrl
 
-                // Paso 2: extraer el ID de la URL (por ejemplo "https://pokeapi.co/api/v2/evolution-chain/2/" → 2)
+                // Step 2: extract the ID from the URL
                 val chainId = extractEvolutionChainId(evolutionUrl)
 
-                // Paso 3: llamar a la API y guardar el resultado
+                // Step 3: call the API and store the result
                 val chainResponse = repository.getPokemonEvolutionChain(chainId)
                 _evolutionChain.value = chainResponse
 
+                // Step 4: get the names of the pokemon evolutions
                 val names = getAllEvolutions(chainResponse.chain)
                 _evolutionNames.value = names
 
+                // Step 5: call the api to get the pokemon data an create the pokemon item
                 val items = names.map { name ->
                     val detail = repository.getPokemonByName(name)
                     PokemonItem(name = name, url = "https://pokeapi.co/api/v2/pokemon/${detail.id}")
@@ -72,7 +72,8 @@ class PokemonDetailViewModel(private val repository: PokemonRepository): ViewMod
         }
     }
 
-    // Función recursiva privada
+    /* This recursive function traverses the evolution chain of a Pokémon
+    and collects the names of all Pokémon in the chain, including all evolution stages.*/
     private fun getAllEvolutions(chain: Chain): List<String> {
         val evolutions = mutableListOf<String>()
         evolutions.add(chain.species.name)
@@ -82,8 +83,10 @@ class PokemonDetailViewModel(private val repository: PokemonRepository): ViewMod
         return evolutions
     }
 
+    /* This function extracts the numeric ID from an evolution chain URL.
+     For example, given: "https://pokeapi.co/api/v2/evolution-chain/1/"
+     it returns: 1*/
     private fun extractEvolutionChainId(url: String): Int {
-        // Ejemplo: https://pokeapi.co/api/v2/evolution-chain/2/
         return url.trimEnd('/').split("/").last().toInt()
     }
 }

@@ -1,6 +1,5 @@
 package com.example.pokeapicompose.ui.views
 
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -32,6 +31,10 @@ import com.example.pokeapicompose.data.navigation.AppScreens
 import com.example.pokeapicompose.viewmodel.PokemonListViewModel
 import androidx.compose.runtime.remember as remember
 
+/**
+ * Displays the main screen for listing Pokémon.
+ * It handles search input, type filtering, and different UI states (loading, error, success).
+ */
 @Composable
 fun PokemonListScreen(viewModel: PokemonListViewModel, navController: NavController) {
     val pokemonFiltered = viewModel.pokemonFilteredList.collectAsState()
@@ -76,6 +79,9 @@ fun PokemonListScreen(viewModel: PokemonListViewModel, navController: NavControl
     }
 }
 
+/**
+ * Displays a large bold title.
+ */
 @Composable
 fun Title(title: String) {
     Text(
@@ -89,6 +95,11 @@ fun Title(title: String) {
     )
 }
 
+/**
+ * Displays a list of Pokémon in a scrollable column.
+ * Shows a dynamic title based on the selected Pokémon type.
+ * Navigates to the detail screen when a Pokémon is clicked.
+ */
 @Composable
 fun PokemonList(
     pokemonListResponse: PokemonListResponse,
@@ -104,7 +115,6 @@ fun PokemonList(
 
         LazyColumn(modifier = Modifier.fillMaxSize()) {
             items(pokemonListResponse.results) { pokemon ->
-                //Log.d("PKM", pokemon.url+" "+pokemon.name+" "+pokemon.id)
                 PokemonListItem(pokemon = pokemon) {
                     // Go to the detail Screen
                     navController.navigate(route = AppScreens.PokemonDetailScreen.route + "/${pokemon.id}")
@@ -115,7 +125,10 @@ fun PokemonList(
 
 }
 
-
+/**
+ * Displays a single Pokémon item in the list.
+ * Shows the Pokémon's image and name, and handles click interaction.
+ */
 @Composable
 fun PokemonListItem(
     pokemon: PokemonItem,
@@ -155,6 +168,10 @@ fun PokemonListItem(
     }
 }
 
+/**
+ * Displays the search section with a search bar and filter button.
+ * Allows users to filter Pokémon by name or type through a dialog.
+ */
 @Composable
 fun SearchSection(
     searchQuery: String,
@@ -201,6 +218,10 @@ fun SearchSection(
     }
 }
 
+/**
+ * Displays a button with a filter icon.
+ * Triggers the provided callback when clicked to open the filter options.
+ */
 @Composable
 fun FilterButton(onClick: () -> Unit) {
     IconButton(onClick = onClick) {
@@ -212,6 +233,12 @@ fun FilterButton(onClick: () -> Unit) {
     }
 }
 
+/**
+ * Displays a dialog for selecting a Pokémon type.
+ * It shows a list of Pokémon types as radio buttons, allowing the user to select a type.
+ * The selected type is passed back through the `onTypeSelected` callback when confirmed.
+ * The dialog can be dismissed by the user via the dismiss button or by selecting a type.
+ */
 @Composable
 fun TypesDialog(
     onDismissRequest: () -> Unit,
@@ -226,6 +253,9 @@ fun TypesDialog(
 
     val currentSelectedType = remember { mutableStateOf("") }
 
+    /* `LaunchedEffect` is used to launch a side-effect when the composable enters the composition.
+    In this case, it initializes the `currentSelectedType` state with the selectedType value passed to the dialog.
+    If `selectedType` is null, it sets the state to an empty string.*/
     LaunchedEffect(Unit) {
         currentSelectedType.value = selectedType ?: ""
     }
@@ -285,6 +315,10 @@ fun TypesDialog(
     )
 }
 
+/**
+ * Displays a text field for searching Pokémon.
+ * It takes a query string and a function to update the query as parameters.
+ */
 @Composable
 fun SearchBar(query: String, onQueryChanged: (String) -> Unit, modifier: Modifier = Modifier) {
     TextField(

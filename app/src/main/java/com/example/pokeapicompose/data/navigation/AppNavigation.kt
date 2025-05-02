@@ -1,9 +1,6 @@
 package com.example.pokeapicompose.data.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -18,12 +15,17 @@ import com.example.pokeapicompose.ui.views.PokemonListScreen
 import com.example.pokeapicompose.viewmodel.PokemonDetailViewModel
 import com.example.pokeapicompose.viewmodel.PokemonListViewModel
 
+// Create an instance of the AppContainer to access the repository
 private val appContainer = AppContainer()
 
+/**
+ * Manages the navigation between screens in the app.
+ * The NavHost is set up to navigate between the PokémonList and detail screens.
+ */
 @Composable
 fun AppNavigation(){
 
-    //Se encarga de gestionar el estado de navegacion de las pantallas
+    // Manages the navigation state of the screens.
     val navController = rememberNavController()
 
     NavHost(navController = navController, startDestination = AppScreens.PokemonListScreen.route) {
@@ -36,7 +38,7 @@ fun AppNavigation(){
         composable(route = AppScreens.PokemonDetailScreen.route +"/{id}",
             arguments = listOf(navArgument(name = "id") {type = NavType.IntType}))
         { backStackEntry ->
-            //Usar la ID y si es null por defecto usar 1
+            // Retrieves the 'id' argument from the back stack entry. Defaults to 1 if null.
             val id = backStackEntry.arguments?.getInt("id") ?: 1
 
             val detailViewModel: PokemonDetailViewModel = viewModel(

@@ -14,6 +14,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         setContent {
+            // Applies the custom app theme defined in PokeApiComposeTheme
             PokeApiComposeTheme {
                 AppNavigation()
             }

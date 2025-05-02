@@ -48,6 +48,11 @@ import androidx.compose.ui.res.stringResource
 import com.example.pokeapicompose.data.model.PokemonItem
 import com.example.pokeapicompose.ui.theme.SoftBlue
 
+/**
+ * Displays the detail screen for a specific Pokémon.
+ * It shows a loading indicator, error message, or the full Pokémon detail depending on the current UI state.
+ * Triggers data fetching when the screen is first displayed.
+ */
 @Composable
 fun PokemonDetailScreen(id: Int, viewModel: PokemonDetailViewModel) {
     val pokemon by viewModel.pokemon.collectAsState()
@@ -77,6 +82,10 @@ fun PokemonDetailScreen(id: Int, viewModel: PokemonDetailViewModel) {
     }
 }
 
+/**
+ * Displays the full detail view of a Pokémon, including its name, images, type info, and evolution chain.
+ * Evolutions are shown only if more than one evolution stage is available.
+ */
 @Composable
 fun PokemonDetail(pokemon: PokemonDetail, evolutionItems: List<PokemonItem>) {
     val scrollState = rememberScrollState()
@@ -91,13 +100,17 @@ fun PokemonDetail(pokemon: PokemonDetail, evolutionItems: List<PokemonItem>) {
         PokemonDetailImages(pokemon)
         PokemonDetailInformation(pokemon)
 
-        // Only show evolutions if there is more than 1 evolution on the list
+        // Only show evolutions if there is more than 1 pokémon on the list
         if (evolutionItems.size > 1) {
             Evolutions(evolutionItems, pokemon)
         }
     }
 }
 
+/**
+ * Displays a list of evolution stages for the current Pokémon.
+ * Highlights the current Pokémon among the evolution list.
+ */
 @Composable
 fun Evolutions(evolutionItems: List<PokemonItem>, currentPokemon: PokemonDetail) {
     Column(modifier = Modifier.fillMaxWidth()) {
@@ -113,7 +126,10 @@ fun Evolutions(evolutionItems: List<PokemonItem>, currentPokemon: PokemonDetail)
     }
 }
 
-
+/**
+ * Displays the name and ID number of the Pokémon at the top of the detail view.
+ * The name is capitalized and the ID is shown in a 3-digit format.
+ */
 @SuppressLint("DefaultLocale")
 @Composable
 fun PokemonDetailTitle(pokemon: PokemonDetail) {
@@ -138,6 +154,10 @@ fun PokemonDetailTitle(pokemon: PokemonDetail) {
 
 }
 
+/**
+ * Displays the regular and shiny sprite images of the Pokémon side by side.
+ * Each image is shown inside a styled surface card with a label.
+ */
 @Composable
 fun PokemonDetailImages(pokemon: PokemonDetail) {
     Row(
@@ -211,6 +231,10 @@ fun PokemonDetailImages(pokemon: PokemonDetail) {
     }
 }
 
+/**
+ * Displays general information about the Pokémon including its types and physical stats (weight and height).
+ * Information is displayed inside a styled card container.
+ */
 @Composable
 fun PokemonDetailInformation(pokemon: PokemonDetail) {
     Surface(
@@ -229,6 +253,9 @@ fun PokemonDetailInformation(pokemon: PokemonDetail) {
     }
 }
 
+/**
+ * Displays the Pokémon's types in a responsive row layout using pill-shaped colored labels.
+ */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun PokemonDetailTypes(pokemon: PokemonDetail){
@@ -244,6 +271,10 @@ fun PokemonDetailTypes(pokemon: PokemonDetail){
     }
 }
 
+/**
+ * Displays weight and height information for the Pokémon.
+ * Values are shown in metric units (kg for weight, cm for height).
+ */
 @Composable
 fun Information(pokemon: PokemonDetail) {
 
@@ -264,6 +295,9 @@ fun Information(pokemon: PokemonDetail) {
     }
 }
 
+/**
+ * Displays a single pill-shaped label for a Pokémon type with background color depending on the type.
+ */
 @Composable
 fun PillItem(type: String) {
     val bgColor = TypeColorProvider.getColorForType(type)
@@ -299,15 +333,29 @@ fun PillItem(type: String) {
     }
 }
 
-
+/**
+ * Converts a value from hectograms to kilograms.
+ * This is used because Pokémon API weight is provided in hectograms.
+ *
+ * @param hectograms Weight in hectograms.
+ * @return Equivalent weight in kilograms.
+ */
 private fun hectogramsToKilograms(hectograms: Int): Float {
     return hectograms / 10f
 }
 
+/**
+ * Converts a value from decimeters to centimeters.
+ * This is used because Pokémon API height is provided in decimeters.
+ */
 private fun decimetersToCentimeters(decimeters: Int): Int {
     return decimeters * 10
 }
 
+/**
+ * Displays a single Pokémon evolution item with its sprite and name.
+ * If the current item corresponds to the currently viewed Pokémon, a border is added for emphasis.
+ */
 @Composable
 fun PokemonEvolutionItem(
     pokemon: PokemonItem,

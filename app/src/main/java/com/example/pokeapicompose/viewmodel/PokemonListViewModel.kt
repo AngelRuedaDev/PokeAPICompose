@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
 
 class PokemonListViewModel(private val repository: PokemonRepository) : ViewModel() {
     private val _pokemonList = MutableStateFlow<PokemonListResponse?>(null)
-    val pokemonList: StateFlow<PokemonListResponse?> = _pokemonList
+    private val pokemonList: StateFlow<PokemonListResponse?> = _pokemonList
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
@@ -33,6 +33,7 @@ class PokemonListViewModel(private val repository: PokemonRepository) : ViewMode
     private val _selectedType = MutableStateFlow<String?>(null)
     val selectedType: StateFlow<String?> = _selectedType.asStateFlow()
 
+    // Combines the Pokémon list and search query to produce a filtered list
     val pokemonFilteredList: StateFlow<PokemonListResponse> = combine(
         pokemonList,
         searchQuery
@@ -44,11 +45,13 @@ class PokemonListViewModel(private val repository: PokemonRepository) : ViewMode
         PokemonListResponse(0, null, null, emptyList())
     )
 
+    // Initial data loading
     init {
         fetchPokemonList()
         fetchTypesList()
     }
 
+    // Fetches the full list of Pokémon from the repository
     private fun fetchPokemonList() {
         viewModelScope.launch {
             _isLoading.value = true
@@ -64,6 +67,7 @@ class PokemonListViewModel(private val repository: PokemonRepository) : ViewMode
         }
     }
 
+    // Fetches the list of Pokémon types, excluding unknown, stellar, and shadow
     private fun fetchTypesList() {
         viewModelScope.launch {
             _isLoading.value = true
@@ -78,7 +82,8 @@ class PokemonListViewModel(private val repository: PokemonRepository) : ViewMode
         }
     }
 
-    fun searchPokemonByType(pokemonType: String) {
+    // Fetches a list of Pokémon filtered by type
+    private fun searchPokemonByType(pokemonType: String) {
         viewModelScope.launch {
             _isLoading.value = true
             try {
@@ -98,19 +103,22 @@ class PokemonListViewModel(private val repository: PokemonRepository) : ViewMode
         }
     }
 
+    // Updates the search query based on user input
     fun onSearchQueryChanged(query: String) {
         _searchQuery.value = query
     }
 
+    // Handles the logic when a type is selected or cleared
     fun onTypeSelected(type: String?) {
         _selectedType.value = type
         if (type == null) {
-            fetchPokemonList() // Lista completa
+            fetchPokemonList()
         } else {
             searchPokemonByType(type)
         }
     }
 
+    // Filters Pokémon list based on search query
     private fun filterPokemonList(list: PokemonListResponse?, query: String): PokemonListResponse {
         if (list == null) return PokemonListResponse(0, null, null, emptyList())
         if (query.isBlank()) return list
@@ -122,6 +130,7 @@ class PokemonListViewModel(private val repository: PokemonRepository) : ViewMode
         return list.copy(results = filtered)
     }
 
+    // Filters out Pokémon names containing "="
     private fun filterToNotShow(pokemonList: List<PokemonItem>): List<PokemonItem> {
         return pokemonList.filterNot { it.name.contains("-", ignoreCase = true) }
     }

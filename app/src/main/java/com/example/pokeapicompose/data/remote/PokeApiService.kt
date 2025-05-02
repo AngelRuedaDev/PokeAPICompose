@@ -10,45 +10,49 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
 
+/**
+ * Interface representing the PokeAPI service.
+ * This interface defines the network calls to fetch data from the Pokémon API.
+ */
 interface PokeApiService {
 
-    // Llama a: https://pokeapi.co/api/v2/pokemon?limit=20
+    // Calls: https://pokeapi.co/api/v2/pokemon?limit=20
     @GET("pokemon")
     suspend fun getPokemonList(
         @Query("limit") limit: Int = 20,
         @Query("offset") offset: Int = 0
     ): PokemonListResponse
 
-    // Llama a: https://pokeapi.co/api/v2/pokemon/{id}
+    // Calls: https://pokeapi.co/api/v2/pokemon/{id}
     @GET("pokemon/{id}")
     suspend fun getPokemonDetail(
         @Path("id") id: Int
     ): PokemonDetail
 
-    // Llama a: https://pokeapi.co/api/v2/pokemon/{name}
+    // Calls: https://pokeapi.co/api/v2/pokemon/{name}
     @GET("pokemon/{name}")
     suspend fun getPokemonByName(
         @Path("name") name: String
     ): PokemonDetail
 
-    // Llama a: https://pokeapi.co/api/v2/pokemon-species/{id}
+    // Calls: https://pokeapi.co/api/v2/pokemon-species/{id}
     @GET("pokemon-species/{id}")
     suspend fun getPokemonEvolutionUrl(
         @Path("id") id: Int
     ): PokemonSpecie
 
-    // Llama a: https://pokeapi.co/api/v2/evolution-chain/{id}
+    // Calls: https://pokeapi.co/api/v2/evolution-chain/{id}
     @GET("evolution-chain/{id}/")
     suspend fun getEvolutionChain(@Path("id") id: Int): EvolutionChain
 
-    // Llama a: https://pokeapi.co/api/v2/type?limit=50
+    // Calls: https://pokeapi.co/api/v2/type?limit=50
     @GET("type")
     suspend fun getTypesList(
         @Query("limit") limit: Int = 50,
         @Query("offset") offset: Int = 0
     ): TypeListResponse
 
-    // Llama a: https://pokeapi.co/api/v2/type/{name}
+    // Calls: https://pokeapi.co/api/v2/type/{name}
     @GET("type/{typeName}")
     suspend fun getTypeDetail(@Path("typeName") typeName: String): TypeInfo
 }
