@@ -8,7 +8,6 @@ import com.example.pokeapicompose.ui.theme.PokeApiComposeTheme
 import com.example.pokeapicompose.data.navigation.AppNavigation
 
 class MainActivity : ComponentActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
