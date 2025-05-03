@@ -7,6 +7,7 @@ import com.example.pokeapicompose.data.model.EvolutionChain
 import com.example.pokeapicompose.data.model.PokemonDetail
 import com.example.pokeapicompose.data.model.PokemonItem
 import com.example.pokeapicompose.data.repository.PokemonRepository
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -67,6 +68,7 @@ class PokemonDetailViewModel(private val repository: PokemonRepository): ViewMod
             } catch (e: Exception) {
                 _error.value = e.localizedMessage ?: "Unknown error"
             } finally {
+                delay(2000)
                 _isLoading.value = false
             }
         }

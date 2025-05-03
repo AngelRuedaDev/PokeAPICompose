@@ -21,7 +21,6 @@ import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -45,6 +44,11 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Surface
 import androidx.compose.ui.res.stringResource
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.pokeapicompose.data.model.PokemonItem
 import com.example.pokeapicompose.ui.theme.SoftBlue
 
@@ -71,7 +75,7 @@ fun PokemonDetailScreen(id: Int, viewModel: PokemonDetailViewModel) {
             .padding(WindowInsets.systemBars.only(WindowInsetsSides.Top).asPaddingValues())
     ) {
         when {
-            isLoading -> CircularProgressIndicator(Modifier.align(Alignment.Center))
+            isLoading -> PokemonLoadingDetail()
             error != null -> Text(error ?: stringResource(id = R.string.unknown_error), Modifier.align(Alignment.Center))
             pokemon != null -> {
                 Column {
@@ -398,5 +402,22 @@ fun PokemonEvolutionItem(
                 fontWeight = FontWeight.Normal
             )
         }
+    }
+}
+
+@Composable
+fun PokemonLoadingDetail() {
+    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.pokeball_loading))
+    val progress by animateLottieCompositionAsState(composition, iterations = LottieConstants.IterateForever)
+    Box(
+        modifier = Modifier
+            .fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        LottieAnimation(
+            composition = composition,
+            progress = { progress },
+            modifier = Modifier.size(150.dp)
+        )
     }
 }

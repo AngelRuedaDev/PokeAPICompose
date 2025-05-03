@@ -10,6 +10,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,12 +24,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.pokeapicompose.R
 import com.example.pokeapicompose.data.model.PokemonItem
 import com.example.pokeapicompose.data.model.PokemonListResponse
 import com.example.pokeapicompose.data.model.TypeListResponse
 import com.example.pokeapicompose.data.navigation.AppScreens
 import com.example.pokeapicompose.viewmodel.PokemonListViewModel
+import kotlinx.coroutines.delay
 import androidx.compose.runtime.remember as remember
 
 /**
@@ -52,7 +59,8 @@ fun PokemonListScreen(viewModel: PokemonListViewModel, navController: NavControl
     ) {
         when {
             isLoading.value -> {
-                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                //CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                PokemonLoading()
             }
 
             error.value != null -> {
@@ -76,6 +84,23 @@ fun PokemonListScreen(viewModel: PokemonListViewModel, navController: NavControl
                 }
             }
         }
+    }
+}
+
+@Composable
+fun PokemonLoading() {
+    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.pokeball_loading))
+    val progress by animateLottieCompositionAsState(composition, iterations = LottieConstants.IterateForever)
+    Box(
+        modifier = Modifier
+            .fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        LottieAnimation(
+            composition = composition,
+            progress = { progress },
+            modifier = Modifier.size(150.dp)
+        )
     }
 }
 

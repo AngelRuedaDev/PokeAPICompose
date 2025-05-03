@@ -79,4 +79,7 @@ dependencies {
     //NavController
     implementation(libs.androidx.navigation.compose)
 
+    //Lottie
+    implementation(libs.lottie.compose)
+
 }

@@ -6,6 +6,7 @@ import com.example.pokeapicompose.data.model.PokemonItem
 import com.example.pokeapicompose.data.model.PokemonListResponse
 import com.example.pokeapicompose.data.model.TypeListResponse
 import com.example.pokeapicompose.data.repository.PokemonRepository
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -62,6 +63,7 @@ class PokemonListViewModel(private val repository: PokemonRepository) : ViewMode
             } catch (e: Exception) {
                 _error.value = e.localizedMessage ?: "Unknown error"
             } finally {
+                delay(2000)
                 _isLoading.value = false
             }
         }
@@ -77,6 +79,7 @@ class PokemonListViewModel(private val repository: PokemonRepository) : ViewMode
             } catch (e: Exception) {
                 _error.value = e.localizedMessage ?: "Unknown error"
             } finally {
+                delay(2000)
                 _isLoading.value = false
             }
         }
